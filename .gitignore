@@ -25,4 +25,5 @@ npm-debug.log
 Thumbs.db
 yarn-error.log
 note.txt
-/bootstrap/cache/
+/bootstrap/cache/*.php
+!/bootstrap/cache/.gitignore
