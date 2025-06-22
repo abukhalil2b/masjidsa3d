@@ -9,13 +9,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-
-            @if (session('success'))
-                <x-alert type="success" :message="session('success')" class="mb-4" />
-            @endif
-
             <div class="mb-6 flex justify-end items-center space-x-4 rtl:space-x-reverse">
-
                 <x-primary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'create-task')">
                     {{ __('إضافة مهمة جديدة') }}
                 </x-primary-button>
@@ -48,7 +42,7 @@
                                             <td class="px-4 py-3 text-sm text-gray-600">{{ $task->point }}</td>
                                             <td class="px-4 py-3 text-sm text-gray-600">
                                                 <x-primary-button-link
-                                                    href="{{ route('tasks.show', $task->id) }}">show</x-primary-button-link>
+                                                    href="{{ route('tasks.show', $task->id) }}">إجراء</x-primary-button-link>
                                             </td>
                                             <td class="px-4 py-3 text-sm text-gray-600">{{ $task->group->title ?? '-' }}
                                             </td>
@@ -134,7 +128,7 @@
                 </div>
             </div>
 
-            <div class="mt-6 flex justify-end space-x-3 rtl:space-x-reverse">
+            <div class="mt-6 flex gap-1 justify-end space-x-3 rtl:space-x-reverse">
                 <x-secondary-button x-on:click="$dispatch('close')">
                     {{ __('إلغاء') }}
                 </x-secondary-button>

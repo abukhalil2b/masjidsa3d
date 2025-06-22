@@ -1,7 +1,6 @@
 @props([
     'type' => 'info', // Default type: 'info', 'success', 'error', 'warning'
     'message' => '',
-    // Additional classes are automatically merged via $attributes
 ])
 
 @php

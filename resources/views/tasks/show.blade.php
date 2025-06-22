@@ -66,7 +66,7 @@
                     <x-input-error :messages="$errors->get('achieved_point')" class="mt-2" />
                 </div>
 
-                <div class="mt-6 flex justify-end">
+                <div class="mt-6 flex gap-1 justify-end">
                     <x-secondary-button x-on:click="$dispatch('close')">
                         إلغاء
                     </x-secondary-button>

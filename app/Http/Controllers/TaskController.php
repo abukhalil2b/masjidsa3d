@@ -24,24 +24,28 @@ class TaskController extends Controller
 
 
     public function show(Task $task)
-{
-    $student_group_id = DB::table('group_task_assignments')
-        ->where('task_group_id', $task->task_group_id)
-        ->value('student_group_id');
+    {
+        $student_group_id = DB::table('group_task_assignments')
+            ->where('task_group_id', $task->task_group_id)
+            ->value('student_group_id');
 
-    if (!$student_group_id) {
-        return back()->with('error', 'لا توجد مجموعة طلاب مرتبطة بهذه المهمة.');
+        if (!$student_group_id) {
+
+            return back()->with([
+                'type' => 'error',
+                'message' => 'لا توجد مجموعة طلاب مرتبطة بهذه المهمة.',
+            ]);
+        }
+
+        $students = Student::where('student_group_id', $student_group_id)->get();
+
+        $studentTasks = StudentTask::where('task_id', $task->id)
+            ->whereIn('student_id', $students->pluck('id'))
+            ->get()
+            ->keyBy('student_id');
+
+        return view('tasks.show', compact('task', 'students', 'studentTasks'));
     }
-
-    $students = Student::where('student_group_id', $student_group_id)->get();
-
-    $studentTasks = StudentTask::where('task_id', $task->id)
-        ->whereIn('student_id', $students->pluck('id'))
-        ->get()
-        ->keyBy('student_id');
-
-    return view('tasks.show', compact('task', 'students', 'studentTasks'));
-}
 
 
 
@@ -72,7 +76,11 @@ class TaskController extends Controller
                 ->first();
 
             if (!$group) {
-                return redirect()->back()->withErrors(['task_group_id' => 'المجموعة غير صالحة أو لا تتبعك.']);
+                
+                return redirect()->back()->with([
+                'type' => 'error',
+                'message' =>  'المجموعة غير صالحة أو لا تتبعك.',
+            ]);
             }
 
             $groupId = $group->id;
@@ -121,7 +129,7 @@ class TaskController extends Controller
         // Get tasks that belong to teacher's task groups
         $tasks = Task::whereHas('group', function ($q) use ($teacherId) {
             $q->where('teacher_id', $teacherId);
-        })->with(['studentTasks.student'])
+        })->with(['studentTasks.student','group'])
             ->get();
 
         return view('tasks.evaluate.index', compact('tasks'));
@@ -129,7 +137,11 @@ class TaskController extends Controller
 
     public function evaluateForm(StudentTask $studentTask)
     {
-        return view('tasks.evaluate.form', compact('studentTask'));
+        $student = Student::findOrFail($studentTask->student_id);
+
+        $task = Task::findOrFail($studentTask->task_id);
+
+        return view('tasks.evaluate.form', compact('studentTask','student','task'));
     }
 
     public function storeEvaluation(Request $request)

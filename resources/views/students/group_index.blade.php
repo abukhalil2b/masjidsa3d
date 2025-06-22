@@ -71,7 +71,7 @@
                 <x-input-error :messages="$errors->get('title')" class="mt-2" />
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex gap-1 justify-end">
                 <x-secondary-button x-on:click="$dispatch('close')">
                     {{ __('إلغاء') }}
                 </x-secondary-button>
