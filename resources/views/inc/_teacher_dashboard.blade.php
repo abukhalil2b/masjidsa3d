@@ -3,64 +3,53 @@
 </x-primary-button>
 
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 bg-white border-b border-gray-200">
-
-                @if ($students->count())
-                    <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
-                            <thead class="bg-gray-50">
-                                <tr>
-                                    <th class="px-6 py-3 text-right">{{ __('الاسم') }}</th>
-                                    <th class="px-6 py-3 text-right">{{ __('الهاتف') }}</th>
-                                    <th class="px-6 py-3 text-right">{{ __('الصف') }}</th>
-                                    <th class="px-6 py-3 text-right">{{ __('المجموعة') }}</th>
-                                    <th class="px-6 py-3 text-right">{{ __('الإجراءات') }}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($students as $student)
-                                    <tr>
-                                        <td class="px-6 py-4">{{ $student->name }}</td>
-                                        <td class="px-6 py-4">{{ $student->phone ?? '-' }}</td>
-                                        <td class="px-6 py-4">{{ $student->grade ?? '-' }}</td>
-                                        <td class="px-6 py-4">{{ $student->group->title ?? '-' }}</td>
-
-                                        <td class="px-6 py-4 text-right">
-                                            <x-primary-button x-data=""
-                                                x-on:click.prevent="$dispatch('open-modal', 'edit-student-{{ $student->id }}')"
-                                                class="text-sm">
-                                                {{ __('تعديل') }}
-                                            </x-primary-button>
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="mt-4">
-                        {{ $students->links() }}
-                    </div>
-                @else
-                    <div class="text-center py-12">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
-                                d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                        <h3 class="mt-2 text-lg font-medium text-gray-900">{{ __('لا يوجد طلاب') }}</h3>
-                        <p class="mt-1 text-sm text-gray-500">{{ __('ابدأ بإضافة طلاب جديدين') }}</p>
-                        <div class="mt-6">
-                            <x-primary-button x-data=""
-                                x-on:click.prevent="$dispatch('open-modal', 'create-student')">
-                                {{ __('إضافة طالب') }}
-                            </x-primary-button>
-                        </div>
-                    </div>
-                @endif
+    <div class="max-w-7xl mx-auto sm:px-2 lg:px-6">
+        @if ($students->count())
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-xs">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="px-4 py-3 text-right">{{ __('الاسم') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('المجموعة') }}</th>
+                            <th class="px-4 py-3 text-right">{{ __('الإجراءات') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($students as $student)
+                            <tr>
+                                <td class="px-4 py-4">{{ $student->name }}</td>
+                                <td class="px-4 py-4">{{ $student->group->title ?? '-' }}</td>
+                                <td class="px-4 py-4 text-right">
+                                    <div x-data=""
+                                        x-on:click.prevent="$dispatch('open-modal', 'edit-student-{{ $student->id }}')"
+                                        class="text-xs font-bold cursor-pointer">
+                                        {{ __('تعديل') }}
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
             </div>
-        </div>
+            <div class="mt-4">
+                {{ $students->links() }}
+            </div>
+        @else
+            <div class="text-center py-12">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <h3 class="mt-2 text-lg font-medium text-gray-900">{{ __('لا يوجد طلاب') }}</h3>
+                <p class="mt-1 text-sm text-gray-500">{{ __('ابدأ بإضافة طلاب جديدين') }}</p>
+                <div class="mt-6">
+                    <x-primary-button x-data=""
+                        x-on:click.prevent="$dispatch('open-modal', 'create-student')">
+                        {{ __('إضافة طالب') }}
+                    </x-primary-button>
+                </div>
+            </div>
+        @endif
     </div>
 </div>
 

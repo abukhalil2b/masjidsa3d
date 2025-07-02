@@ -13,7 +13,11 @@ class StudentGroupController extends Controller
     public function index()
     {
         $teacherId = auth()->id();
-        $studentGroups = StudentGroup::with('students')->where('teacher_id', $teacherId)->get();
+
+        $studentGroups = StudentGroup::where('teacher_id', $teacherId)
+            ->withCount('students') // Count students directly
+            ->withCount('taskGroups') // Count assigned task groups (missions)
+            ->get();
 
         return view('students.group_index', compact('studentGroups'));
     }

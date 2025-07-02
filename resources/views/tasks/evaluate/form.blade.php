@@ -1,9 +1,9 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">تقييم مهمة</h2>
+        <h2 class="text-md font-semibold text-gray-800">تقييم مهمة</h2>
     </x-slot>
 
-    <div class="py-8 max-w-xl mx-auto bg-white p-6 rounded shadow">
+    <div class="py-2 max-w-xl mx-auto bg-white p-6 rounded shadow">
         <h3 class="text-lg font-medium text-gray-700 mb-4">
             تقييم الطالب: {{ $student->name }}
         </h3>

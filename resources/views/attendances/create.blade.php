@@ -30,7 +30,7 @@
                 <x-input-error :messages="$errors->get('students')" />
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-center">
                 <x-primary-button>حفظ</x-primary-button>
             </div>
         </form>

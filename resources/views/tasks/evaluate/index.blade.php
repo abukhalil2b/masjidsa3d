@@ -1,16 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">تقييم المهام</h2>
+        <h2 class="text-md font-bold text-gray-800">تقييم المهام</h2>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-6xl mx-auto">
+    <div class="py-2">
+        <div class="max-w-7xl mx-auto">
             @foreach ($tasks as $task)
                 <div class="mb-6 bg-white rounded shadow p-4">
                     <h3 class="text-lg font-bold text-gray-800">{{ $task->title }}</h3>
-                    <p class="text-sm text-gray-500 mb-2">{{ $task->group->title }}</p>
-                    <p class="text-sm text-gray-500 mb-2">النقاط: {{ $task->point }}</p>
-                    <table class="w-full text-sm text-right table-auto border border-gray-200">
+                    <p class="text-xs text-gray-500 mb-2">{{ $task->group->title }}</p>
+                    <p class="text-xs text-gray-500 mb-2">النقاط: {{ $task->point }}</p>
+                    <table class="w-full text-xs text-right table-auto border border-gray-200">
                         <thead class="bg-gray-100">
                             <tr>
                                 <th class="p-2 border">اسم الطالب</th>

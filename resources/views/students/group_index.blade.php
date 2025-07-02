@@ -1,58 +1,57 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="text-xl font-semibold text-gray-800">إدارة المجموعات</h2>
+        <h2 class="text-md font-semibold text-gray-800">إدارة المجموعات</h2>
     </x-slot>
     <x-primary-button x-data x-on:click.prevent="$dispatch('open-modal', 'create-student-group')">
         {{ __('إضافة مجموعة طلاب') }}
     </x-primary-button>
 
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
-        @if (session('success'))
-            <div class="mb-4 text-green-600">{{ session('success') }}</div>
-        @endif
 
         @forelse ($studentGroups as $group)
-            <div class="bg-white shadow rounded-lg mb-6 p-6">
-                <!-- Group Title Edit Form -->
+            <div class="bg-white shadow-md rounded-lg mb-6 p-4">
                 <form method="POST" action="{{ route('student_groups.update_title', $group->id) }}"
-                    class="flex items-center justify-between gap-4 mb-4">
+                    class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 mb-4 border-b pb-4">
                     @csrf
                     @method('PATCH')
 
                     <input type="text" name="title" value="{{ $group->title }}"
-                        class="border-gray-300 rounded-md w-full max-w-xs px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
+                        class="border-gray-300 rounded-md w-full sm:max-w-xs px-3 py-2 text-sm focus:ring-indigo-500 focus:border-indigo-500" />
 
-                    <x-primary-button class="shrink-0">
-                        تحديث الاسم
+                    <x-primary-button class="shrink-0 w-full sm:w-auto text-xs py-2 px-4">
+                        {{ __('تحديث الاسم') }}
                     </x-primary-button>
                 </form>
 
-                @if ($group->students->count())
-                    <table class="min-w-full divide-y divide-gray-200 text-right text-sm">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-4 py-2">اسم الطالب</th>
-                                <th class="px-4 py-2">الهاتف</th>
-                                <th class="px-4 py-2">الصف الدراسي</th>
-                            </tr>
-                        </thead>
-                        <tbody class="bg-white divide-y divide-gray-100">
-                            @foreach ($group->students as $student)
-                                <tr>
-                                    <td class="px-4 py-2">{{ $student->name }}</td>
-                                    <td class="px-4 py-2">{{ $student->phone ?? '-' }}</td>
-                                    <td class="px-4 py-2">{{ $student->grade ?? '-' }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                @else
-                    <p class="text-gray-500 text-sm mt-2">لا يوجد طلاب في هذه المجموعة.</p>
-                @endif
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-700 mb-4">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h-2v-2a4 4 0 00-8 0v2H7a2 2 0 01-2-2V9a2 2 0 012-2h10a2 2 0 012 2v9a2 2 0 01-2 2z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.5 14h5"></path>
+                        </svg>
+                        <span class="font-semibold">{{ __('عدد الطلاب:') }}</span>
+                        <span class="text-gray-900">{{ $group->students_count }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        <span class="font-semibold">{{ __('عدد المهام المربوطة:') }}</span>
+                        <span class="text-gray-900">{{ $group->task_groups_count }}</span>
+                    </div>
+                </div>
+
             </div>
         @empty
-            <div class="bg-white shadow rounded-lg p-6 text-center text-gray-500">
-                لا توجد مجموعات حتى الآن. قم بإضافة طلاب لتكوين مجموعات.
+            <div class="bg-white shadow-md rounded-lg p-6 text-center text-gray-600">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                    <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10v11h18V10M6 6v2m8-2v2m6-4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H6z"></path>
+                </svg>
+                <p class="mt-4 text-lg font-medium">
+                    {{ __('لا توجد مجموعات طلاب حالياً.') }}
+                </p>
+                <p class="mt-1 text-sm">
+                    {{ __('ابدأ بإنشاء مجموعات لطلابك لتنظيمهم.') }}
+                </p>
             </div>
         @endforelse
     </div>
