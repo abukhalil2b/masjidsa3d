@@ -36,22 +36,22 @@ Route::middleware('auth')->group(function () {
 
 
 
-    // ✅ Evaluation routes (related to student_tasks)
+    // Evaluation routes (related to student_tasks)
     Route::prefix('student-tasks')->name('student-tasks.')->group(function () {
 
         // Show form to evaluate a specific student task
-        Route::get('{studentTask}/evaluate', [TaskController::class, 'evaluateForm'])
-            ->name('evaluate.form');
+        Route::get('{student}/task/{task}/evaluate', [TaskController::class, 'evaluateForm'])
+    ->name('evaluate.form');
 
         // Store evaluation (achieved_point + done_at)
         Route::put('evaluate', [TaskController::class, 'storeEvaluation'])
             ->name('evaluate.store');
     });
 
-    // ✅ Evaluation index — list all tasks that have student submissions
+    // Evaluation index — list all tasks that have student submissions
     Route::get('/tasks/evaluate', [TaskController::class, 'evaluateIndex'])
         ->name('tasks.evaluate.index');
-    // ✅ Resource routes for TaskController (excluding create/edit views)
+    // Resource routes for TaskController (excluding create/edit views)
     Route::resource('tasks', TaskController::class)->except(['create', 'edit']);
 
 
@@ -67,6 +67,8 @@ Route::middleware('auth')->group(function () {
     // Student Management Routes
     // Assuming you have an 'index' method for students somewhere,
     // otherwise, you might need a full resource for students or adjust as needed.
+    Route::get('students/show_tasks/{student}', [StudentController::class, 'showTasks'])->name('students.show_tasks');
+
     Route::post('students/store', [StudentController::class, 'store'])->name('students.store');
     Route::patch('students/update/{student}', [StudentController::class, 'update'])->name('students.update');
     Route::delete('students/destroy/{student}', [StudentController::class, 'destroy'])->name('students.destroy');

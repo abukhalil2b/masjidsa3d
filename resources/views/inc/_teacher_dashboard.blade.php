@@ -19,11 +19,18 @@
                             <tr>
                                 <td class="px-4 py-4">{{ $student->name }}</td>
                                 <td class="px-4 py-4">{{ $student->group->title ?? '-' }}</td>
-                                <td class="px-4 py-4 text-right">
-                                    <div x-data=""
-                                        x-on:click.prevent="$dispatch('open-modal', 'edit-student-{{ $student->id }}')"
-                                        class="text-xs font-bold cursor-pointer">
-                                        {{ __('تعديل') }}
+                                <td class="px-4 py-3 text-right">
+                                    <div class="flex items-center justify-end gap-3"> {{-- Use flex to align buttons --}}
+                                        <x-secondary-button x-data=""
+                                            x-on:click.prevent="$dispatch('open-modal', 'edit-student-{{ $student->id }}')"
+                                            class="text-xs px-3 py-1.5" {{-- Adjusted padding for a friendlier look --}}>
+                                            {{ __('تعديل') }}
+                                        </x-secondary-button>
+
+                                        <a href="{{ route('students.show_tasks', $student->id) }}"
+                                            class="inline-flex items-center px-3 py-1.5 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                            {{ __('المهام') }}
+                                        </a>
                                     </div>
                                 </td>
                             </tr>

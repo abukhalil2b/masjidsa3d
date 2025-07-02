@@ -76,11 +76,11 @@ class TaskController extends Controller
                 ->first();
 
             if (!$group) {
-                
+
                 return redirect()->back()->with([
-                'type' => 'error',
-                'message' =>  'المجموعة غير صالحة أو لا تتبعك.',
-            ]);
+                    'type' => 'error',
+                    'message' =>  'المجموعة غير صالحة أو لا تتبعك.',
+                ]);
             }
 
             $groupId = $group->id;
@@ -122,26 +122,14 @@ class TaskController extends Controller
             ->with('success', 'تم حذف المهمة بنجاح');
     }
 
-    public function evaluateIndex()
+
+    public function evaluateForm(Student $student, Task $task)
     {
-        $teacherId = Auth::id();
-
-        // Get tasks that belong to teacher's task groups
-        $tasks = Task::whereHas('group', function ($q) use ($teacherId) {
-            $q->where('teacher_id', $teacherId);
-        })->with(['studentTasks.student','group'])
-            ->get();
-
-        return view('tasks.evaluate.index', compact('tasks'));
-    }
-
-    public function evaluateForm(StudentTask $studentTask)
-    {
-        $student = Student::findOrFail($studentTask->student_id);
-
-        $task = Task::findOrFail($studentTask->task_id);
-
-        return view('tasks.evaluate.form', compact('studentTask','student','task'));
+        // Find the existing StudentTask record if it exists
+        $studentTask = StudentTask::where('student_id', $student->id)
+            ->where('task_id', $task->id)
+            ->first();
+        return view('tasks.evaluate.form', compact('student', 'task', 'studentTask'));
     }
 
     public function storeEvaluation(Request $request)
@@ -166,4 +154,64 @@ class TaskController extends Controller
         return redirect()->route('tasks.show', $validated['task_id'])
             ->with('success', 'تم حفظ التقييم بنجاح');
     }
+
+
+    public function evaluateIndex()
+    {
+        $teacherId = Auth::id();
+
+        // Fetch tasks belonging to the teacher's task groups
+        $tasks = Task::whereHas('group', function ($q) use ($teacherId) {
+            $q->where('teacher_id', $teacherId);
+        })
+            ->with('group') // Eager load the task group for display
+            ->get();
+
+        // Prepare data for the view
+        $tasksWithStudents = $tasks->map(function ($task) {
+            // Get all student IDs from student groups associated with this task's group
+            $studentIdsInAssignedGroups = Student::whereHas('group.taskGroups', function ($query) use ($task) {
+                $query->where('task_groups.id', $task->task_group_id);
+            })->pluck('id'); // Get only the IDs
+
+            // Fetch all relevant students and their associated studentTask for THIS specific task
+            $studentsForTask = Student::whereIn('id', $studentIdsInAssignedGroups)
+                ->with(['studentTasks' => function ($query) use ($task) {
+                    $query->where('task_id', $task->id);
+                }])
+                ->get();
+
+            // Map students to their task status
+            $evaluatedStudents = $studentsForTask->map(function ($student) use ($task) {
+                $studentTaskRecord = $student->studentTasks->first(); // Get the single studentTask for this task
+
+                return (object) [
+                    'student' => $student,
+                    'achieved_point' => $studentTaskRecord ? $studentTaskRecord->achieved_point : null,
+                    'done_at' => $studentTaskRecord ? $studentTaskRecord->done_at : null,
+                    'is_done' => (bool) $studentTaskRecord && $studentTaskRecord->achieved_point !== null,
+                ];
+            });
+
+            // Calculate overall task status (e.g., how many students completed it)
+            $completedCount = $evaluatedStudents->filter(fn($s) => $s->is_done)->count();
+            $totalStudentsCount = $evaluatedStudents->count();
+
+
+            return (object) [
+                'task' => $task,
+                'students_status' => $evaluatedStudents,
+                'completed_count' => $completedCount,
+                'total_students_count' => $totalStudentsCount,
+            ];
+        });
+
+        return view('tasks.evaluate.index', compact('tasksWithStudents'));
+    }
+
+    // You will still need your evaluate.store and student-tasks.evaluate.form methods
+    // based on the previous discussion.
+    // For example, the form could be similar to the previous modal, but now triggered from this table.
+    // Ensure the route `student-tasks.evaluate.form` correctly leads to a view/modal for evaluation.
+
 }

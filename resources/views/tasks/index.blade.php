@@ -25,7 +25,7 @@
             </div>
 
             <div class="mb-6 px-2 flex flex-col sm:flex-row items-center gap-2 text-sm">
-                <label for="groupFilter" class="text-gray-700 font-medium">تصفية حسب المجموعة:</label>
+                <label for="groupFilter" class="text-gray-700 font-medium">تصفية حسب الالبرنامج:</label>
                 <select id="groupFilter" name="group" x-model="selectedGroup"
                     class="w-full sm:w-auto border-gray-300 rounded-md shadow-sm text-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     <option value="">الكل</option>
@@ -48,7 +48,7 @@
                             </div>
 
                             <div class="flex justify-between items-center text-xs text-gray-600">
-                                <span class="font-medium">المجموعة:</span>
+                                <span class="font-medium">الالبرنامج:</span>
                                 @php
                                     $groupColor = [
                                         'bg-green-100 text-green-700',
@@ -62,7 +62,7 @@
                                     $color = $groupColor[$colorIndex];
                                 @endphp
                                 <span class="px-2 py-0.5 rounded-full {{ $color }} font-medium">
-                                    {{ $task->group->title ?? 'بدون مجموعة' }}
+                                    {{ $task->group->title ?? 'بدون البرنامج' }}
                                 </span>
                             </div>
 
@@ -97,7 +97,7 @@
                                 </span>
                             </div>
                             <div class="flex justify-between items-center text-xs text-gray-600 mb-4">
-                                <span class="font-medium">المجموعة:</span>
+                                <span class="font-medium">الالبرنامج:</span>
                                 @php
                                     $groupColor = [
                                         'bg-green-100 text-green-700',
@@ -111,7 +111,7 @@
                                     $color = $groupColor[$colorIndex];
                                 @endphp
                                 <span class="px-2 py-0.5 rounded-full {{ $color }} font-medium">
-                                    {{ $task->group->title ?? 'بدون مجموعة' }}
+                                    {{ $task->group->title ?? 'بدون البرنامج' }}
                                 </span>
                             </div>
 
@@ -167,10 +167,10 @@
             </div>
 
             <div x-data="{ newGroup: false }" class="mt-5">
-                <x-input-label for="task_group_id" value="اختر مجموعة" class="mb-1" />
+                <x-input-label for="task_group_id" value="اختر البرنامج" class="mb-1" />
                 <select id="task_group_id" name="task_group_id" x-show="!newGroup"
                     class="mt-1 block w-full border-gray-300 focus:ring-indigo-500 text-sm rounded-md shadow-sm">
-                    <option value="">اختر مجموعة</option>
+                    <option value="">اختر البرنامج</option>
                     @foreach ($taskGroups as $group)
                         <option value="{{ $group->id }}">{{ $group->title }}</option>
                     @endforeach
@@ -179,11 +179,11 @@
 
                 <button type="button" class="text-indigo-600 text-xs mt-3 hover:text-indigo-800 transition duration-150 ease-in-out" x-show="!newGroup"
                     x-on:click="newGroup = true">
-                    {{ __('أو إنشاء مجموعة جديدة') }}
+                    {{ __('أو إنشاء برنامج جديد') }}
                 </button>
 
                 <div x-show="newGroup" class="mt-3">
-                    <x-input-label for="new_group_title" value="{{ __('اسم المجموعة الجديدة') }}" class="mb-1" />
+                    <x-input-label for="new_group_title" value="{{ __('اسم الالبرنامج الجديدة') }}" class="mb-1" />
                     <x-text-input id="new_group_title" name="new_group_title" type="text"
                         class="mt-1 block w-full text-sm" />
                     <x-input-error :messages="$errors->get('new_group_title')" class="mt-2 text-xs" />

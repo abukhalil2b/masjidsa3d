@@ -155,4 +155,38 @@ class StudentController extends Controller
         return redirect()->route('tasks.evaluate.index')
             ->with('success', 'النقاط المسجلة بنجاح للمهمة ' . $studentTask->task->title . ' للطالب ' . $studentTask->student->name);
     }
+ 
+    public function showTasks(Student $student)
+    {
+        $assignedTasks = Task::whereHas('group.studentGroups', function ($query) use ($student) {
+            $query->where('student_groups.id', $student->student_group_id);
+        })->get();
+
+        $doneTasks = $student->studentTasks()->with('task')->get()->keyBy('task_id');
+
+        $totalAchievedPoints = 0; // Initialize total achieved points
+
+        $studentTasksStatus = $assignedTasks->map(function ($task) use ($doneTasks, &$totalAchievedPoints) {
+            $status = [
+                'task' => $task,
+                'is_done' => false,
+                'achieved_point' => null,
+                'done_at' => null,
+            ];
+
+            if ($doneTasks->has($task->id)) {
+                $studentTaskRecord = $doneTasks->get($task->id);
+                $status['is_done'] = true;
+                $status['achieved_point'] = $studentTaskRecord->achieved_point;
+                $status['done_at'] = $studentTaskRecord->done_at;
+
+                // Add achieved points to the total
+                $totalAchievedPoints += $studentTaskRecord->achieved_point ?? 0;
+            }
+
+            return (object) $status;
+        });
+
+        return view('students.show_tasks', compact('student', 'studentTasksStatus', 'totalAchievedPoints'));
+    }
 }
