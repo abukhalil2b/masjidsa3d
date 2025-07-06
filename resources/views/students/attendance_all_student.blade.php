@@ -25,7 +25,7 @@
            <div>
         كشف الحضور
     </div>
-        <table class="w-full text-right text-sm text-gray-700 border border-gray-300 rounded shadow-md">
+        <table class="w-full text-right text-[10px] text-gray-700 border border-gray-300 rounded shadow-md">
             <thead class="bg-gray-100 text-gray-800">
                 <tr class="text-center">
                     <th class="border px-4 py-2 bg-gray-200">الاسم</th>
