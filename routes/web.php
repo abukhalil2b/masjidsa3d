@@ -41,7 +41,7 @@ Route::middleware('auth')->group(function () {
 
         // Show form to evaluate a specific student task
         Route::get('{student}/task/{task}/evaluate', [TaskController::class, 'evaluateForm'])
-    ->name('evaluate.form');
+            ->name('evaluate.form');
 
         // Store evaluation (achieved_point + done_at)
         Route::put('evaluate', [TaskController::class, 'storeEvaluation'])
@@ -83,5 +83,9 @@ Route::middleware('auth')->group(function () {
 });
 
 
-// --- Authentication Routes (from Breeze/Jetstream) ---
+Route::get('attendance_all_student', [AttendanceController::class, 'attendanceAllStudent'])->name('attendance_all_student');
+
+Route::get('task_student/{group_id}', [AttendanceController::class, 'taskStudent'])->name('task_student');
+
+
 require __DIR__ . '/auth.php';

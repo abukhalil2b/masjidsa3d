@@ -97,4 +97,17 @@ class AttendanceController extends Controller
         return redirect()->route('attendances.show', $attendance->id)
             ->with('success', 'تم تحديث حالة الحضور بنجاح');
     }
+
+    public function attendanceAllStudent(){
+        $students = Student::all();
+        return view('students.attendance_all_student',compact('students'));
+    }
+
+     public function taskStudent($group_id){
+
+        $students = Student::where('student_group_id',$group_id)->get();
+
+        return view('students.task_student',compact('students'));
+    }
+    
 }
