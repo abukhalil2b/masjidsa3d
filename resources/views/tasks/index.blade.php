@@ -198,7 +198,7 @@
                 <x-secondary-button x-on:click="$dispatch('close')" class="text-xs px-4 py-2">
                     {{ __('إلغاء') }}
                 </x-secondary-button>
-                <x-primary-button class="text-xs px-4 py-2">
+                <x-primary-button class="text-xs px-4 py-2" type="submit">
                     {{ __('حفظ') }}
                 </x-primary-button>
             </div>

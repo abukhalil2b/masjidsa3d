@@ -69,7 +69,7 @@
                             @endphp
 
                             <x-modal name="evaluate-task-{{ $task->id }}" focusable>
-                                <form method="POST" action="{{ route('student-tasks.evaluate.store') }}"
+                                <form method="POST" action="{{ route('student_tasks.evaluate.store') }}"
                                     class="p-6" x-data="{ achievedPoint: {{ $taskStatus->achieved_point ?? 'null' }} }">
                                     @csrf
                                     @method('PUT')

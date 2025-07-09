@@ -26,7 +26,15 @@ class StudentTaskController extends Controller
         return back()->with('success', 'تم تسجيل إنجاز المهمة.');
     }
 
-    public function evaluate(){
-        
+    public function evaluate(Request $request){
+        StudentTask::updateOrCreate([
+            'student_id' => $request->student_id,
+            'task_id' => $request->task_id,
+        ], [
+            'achieved_point' => $request->achieved_point,
+            'done_at' => now(),
+        ]);
+
+        return back()->with('success', 'تم تسجيل إنجاز المهمة.');
     }
 }

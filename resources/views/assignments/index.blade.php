@@ -44,7 +44,7 @@
                     </div>
 
                     <div class="mt-6 flex justify-end">
-                        <x-primary-button>
+                        <x-primary-button type="submit">
                             ربط المجموعة
                         </x-primary-button>
                     </div>

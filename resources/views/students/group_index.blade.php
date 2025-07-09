@@ -91,7 +91,7 @@
                     {{ __('إلغاء') }}
                 </x-secondary-button>
 
-                <x-primary-button class="ml-3">
+                <x-primary-button class="ml-3" type="submit">
                     {{ __('حفظ') }}
                 </x-primary-button>
             </div>

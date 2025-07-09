@@ -31,7 +31,7 @@
             </div>
 
             <div class="flex justify-center">
-                <x-primary-button>حفظ</x-primary-button>
+                <x-primary-button type="submit">حفظ</x-primary-button>
             </div>
         </form>
     </div>

@@ -33,7 +33,7 @@ Route::middleware('auth')->group(function () {
 
     // Student marks task as done
     Route::post('students/{student}/tasks/{task}/done', [StudentTaskController::class, 'markDone'])->name('student_tasks.markDone');
-    Route::post('student_tasks/evaluate/store', [StudentTaskController::class, 'evaluate'])->name('student-tasks.evaluate.store');
+    Route::put('student_tasks/evaluate/store', [StudentTaskController::class, 'evaluate'])->name('student_tasks.evaluate.store');
 
 
     // Evaluation index — list all tasks that have student submissions
