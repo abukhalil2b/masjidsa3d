@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminStudentController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StudentController;
@@ -32,25 +33,13 @@ Route::middleware('auth')->group(function () {
 
     // Student marks task as done
     Route::post('students/{student}/tasks/{task}/done', [StudentTaskController::class, 'markDone'])->name('student_tasks.markDone');
+    Route::post('student_tasks/evaluate/store', [StudentTaskController::class, 'evaluate'])->name('student-tasks.evaluate.store');
 
-
-
-
-    // Evaluation routes (related to student_tasks)
-    Route::prefix('student-tasks')->name('student-tasks.')->group(function () {
-
-        // Show form to evaluate a specific student task
-        Route::get('{student}/task/{task}/evaluate', [TaskController::class, 'evaluateForm'])
-            ->name('evaluate.form');
-
-        // Store evaluation (achieved_point + done_at)
-        Route::put('evaluate', [TaskController::class, 'storeEvaluation'])
-            ->name('evaluate.store');
-    });
 
     // Evaluation index — list all tasks that have student submissions
     Route::get('/tasks/evaluate', [TaskController::class, 'evaluateIndex'])
         ->name('tasks.evaluate.index');
+
     // Resource routes for TaskController (excluding create/edit views)
     Route::resource('tasks', TaskController::class)->except(['create', 'edit']);
 
@@ -64,14 +53,13 @@ Route::middleware('auth')->group(function () {
     Route::get('attendances/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
     Route::put('attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
 
-    // Student Management Routes
-    // Assuming you have an 'index' method for students somewhere,
-    // otherwise, you might need a full resource for students or adjust as needed.
-    Route::get('students/show_tasks/{student}', [StudentController::class, 'showTasks'])->name('students.show_tasks');
+      Route::get('students/show_tasks/{student}', [StudentController::class, 'showTasks'])->name('students.show_tasks');
 
-    Route::post('students/store', [StudentController::class, 'store'])->name('students.store');
-    Route::patch('students/update/{student}', [StudentController::class, 'update'])->name('students.update');
-    Route::delete('students/destroy/{student}', [StudentController::class, 'destroy'])->name('students.destroy');
+    // Student Management Routes
+    Route::get('admin/students/index/{student_group}', [AdminStudentController::class, 'index'])->name('admin.students.index');
+    Route::post('admin/students/store', [AdminStudentController::class, 'store'])->name('admin.students.store');
+    Route::patch('admin/students/update/{student}', [AdminStudentController::class, 'update'])->name('admin.students.update');
+    Route::delete('admin/students/destroy/{student}', [AdminStudentController::class, 'destroy'])->name('admin.students.destroy');
 
     Route::post('teachers/store', [TeacherController::class, 'store'])->name('teachers.store');
     Route::patch('teachers/update/{student}', [TeacherController::class, 'update'])->name('teachers.update');

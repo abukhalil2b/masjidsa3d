@@ -25,4 +25,8 @@ class StudentTaskController extends Controller
 
         return back()->with('success', 'تم تسجيل إنجاز المهمة.');
     }
+
+    public function evaluate(){
+        
+    }
 }

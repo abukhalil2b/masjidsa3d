@@ -37,7 +37,7 @@ class ProfileController extends Controller
     {
         $studentGroups = StudentGroup::where('teacher_id', $loggedUser->id)->get();
 
-        $students = Student::with('group')->where('teacher_id', $loggedUser->id)->paginate(50);
+        $students = Student::with('group')->where('teacher_id', $loggedUser->id)->get();
 
         return view('dashboard', compact('students', 'loggedUser', 'studentGroups'));
     }

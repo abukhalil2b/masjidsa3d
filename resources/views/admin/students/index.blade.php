@@ -1,0 +1,208 @@
+<x-app-layout>
+
+    @if (session('success'))
+        <x-alert type="success" :message="session('success')" class="mb-4" />
+    @endif
+
+    <x-primary-button x-data="" x-on:click.prevent="$dispatch('open-modal', 'create-student')">
+        إضافة طالب
+    </x-primary-button>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-2 lg:px-6">
+            @if ($students->count())
+                <div class="overflow-x-auto">
+                    <table class="min-w-full text-xs">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-right">{{ __('الاسم') }}</th>
+                                <th class="px-4 py-3 text-right">{{ __('المجموعة') }}</th>
+                                <th class="px-4 py-3 text-right">{{ __('الإجراءات') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($students as $student)
+                                <tr>
+                                    <td class="px-4 py-4">{{ $student->name }}</td>
+                                    <td class="px-4 py-4">{{ $student->group->title ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-right">
+                                        <div class="flex items-center justify-end gap-3">
+                                            <x-secondary-button x-data=""
+                                                x-on:click.prevent="$dispatch('open-modal', 'edit-student-{{ $student->id }}')"
+                                                class="text-xs px-3 py-1.5">
+                                                {{ __('تعديل') }}
+                                            </x-secondary-button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            @else
+                <div class="text-center py-12">
+                    <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                    <h3 class="mt-2 text-lg font-medium text-gray-900">{{ __('لا يوجد طلاب') }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">{{ __('ابدأ بإضافة طلاب جديدين') }}</p>
+                    <div class="mt-6">
+                        <x-primary-button x-data=""
+                            x-on:click.prevent="$dispatch('open-modal', 'create-student')">
+                            {{ __('إضافة طالب') }}
+                        </x-primary-button>
+                    </div>
+                </div>
+            @endif
+        </div>
+    </div>
+
+    <!-- Create Student Modal -->
+    <x-modal name="create-student" :show="$errors->isNotEmpty()" focusable>
+        <form method="POST" action="{{ route('admin.students.store') }}" class="p-6">
+            @csrf
+            <h2 class="text-lg font-medium text-gray-900">{{ __('إضافة طالب جديد') }}</h2>
+            في
+            <h2>
+                {{ $student_group->title }}
+            </h2>
+            <div class="mt-6 space-y-6">
+                <div>
+                    <x-input-label for="name" value="{{ __('اسم الطالب') }}" />
+                    <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" />
+                    <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                </div>
+
+                <div>
+                    <x-input-label for="phone" value="{{ __('رقم الهاتف') }}" />
+                    <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" />
+                    <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+                </div>
+
+                <div>
+                    <x-input-label for="grade" value="{{ __('الصف الدراسي') }}" />
+                    <select id="grade" name="grade"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                        <option value="">{{ __('اختر الصف') }}</option>
+                        @foreach (range(1, 12) as $grade)
+                            <option value="الصف {{ $grade }}">الصف {{ $grade }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('grade')" class="mt-2" />
+                </div>
+            </div>
+
+            <input type="hidden" name="student_group_id" value="{{ $student_group->id }}">
+
+            <div class="mt-6 flex justify-end">
+                <x-secondary-button x-on:click="$dispatch('close')">
+                    {{ __('إلغاء') }}
+                </x-secondary-button>
+
+                <x-primary-button class="mr-3"  type="submit">
+                    {{ __('حفظ') }}
+                </x-primary-button>
+            </div>
+        </form>
+    </x-modal>
+
+    <!-- Edit Student Modals -->
+    @foreach ($students as $student)
+        <x-modal name="edit-student-{{ $student->id }}" focusable>
+            <form method="POST" action="{{ route('admin.students.update', $student->id) }}" class="p-6">
+                @csrf
+                @method('PATCH')
+                <h2 class="text-lg font-medium text-gray-900">{{ __('تعديل الطالب') }}</h2>
+
+                <div class="mt-6 space-y-6">
+                    <div>
+                        <x-input-label for="edit-name-{{ $student->id }}" value="{{ __('اسم الطالب') }}" />
+                        <x-text-input id="edit-name-{{ $student->id }}" name="name" type="text"
+                            class="mt-1 block w-full" value="{{ $student->name }}" />
+                        <x-input-error :messages="$errors->get('name')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="edit-phone-{{ $student->id }}" value="{{ __('رقم الهاتف') }}" />
+                        <x-text-input id="edit-phone-{{ $student->id }}" name="phone" type="tel"
+                            class="mt-1 block w-full" value="{{ $student->phone }}" />
+                        <x-input-error :messages="$errors->get('phone')" class="mt-2" />
+                    </div>
+
+                    <div>
+                        <x-input-label for="edit-grade-{{ $student->id }}" value="{{ __('الصف الدراسي') }}" />
+                        <select id="edit-grade-{{ $student->id }}" name="grade"
+                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                            <option value="">{{ __('اختر الصف') }}</option>
+                            @foreach (range(1, 12) as $grade)
+                                <option value="الصف {{ $grade }}" @selected($student->grade == 'الصف ' . $grade)>
+                                    الصف {{ $grade }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('grade')" class="mt-2" />
+                    </div>
+                </div>
+
+                <div x-data="{ newGroup: false }" class="mt-6">
+                    <x-input-label for="edit-student-group-{{ $student->id }}" value="{{ __('اختر مجموعة') }}" />
+                    <select id="edit-student-group-{{ $student->id }}" name="student_group_id" x-show="!newGroup"
+                        class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm">
+                        <option value="">{{ __('اختر مجموعة') }}</option>
+                        @foreach ($studentGroups as $group)
+                            <option value="{{ $group->id }}" @selected($student->student_group_id == $group->id)>
+                                {{ $group->title }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <x-input-error :messages="$errors->get('student_group_id')" class="mt-2" />
+
+                    <button type="button" class="text-sm text-indigo-600 mt-2" x-show="!newGroup"
+                        x-on:click="newGroup = true">
+                        {{ __('أو إنشاء مجموعة جديدة') }}
+                    </button>
+
+                    <div x-show="newGroup" class="mt-4">
+                        <x-input-label for="new_group_title" value="{{ __('اسم المجموعة الجديدة') }}" />
+                        <x-text-input id="new_group_title" name="new_group_title" type="text"
+                            class="mt-1 block w-full" />
+                        <x-input-error :messages="$errors->get('new_group_title')" class="mt-2" />
+
+                        <button type="button" class="text-sm text-red-600 mt-2" x-on:click="newGroup = false">
+                            {{ __('اختر من المجموعات الموجودة بدلاً من ذلك') }}
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <x-secondary-button x-on:click="$dispatch('close')">
+                        {{ __('إلغاء') }}
+                    </x-secondary-button>
+
+                    <x-primary-button class="mr-3" type="submit">
+                        {{ __('حفظ التعديلات') }}
+                    </x-primary-button>
+                </div>
+            </form>
+        </x-modal>
+    @endforeach
+
+
+    <div class="flex gap-1">
+        <a href="{{ route('attendance_all_student') }}"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">كشف
+            الحضور لكل الطلاب</a>
+        <a href="{{ route('task_student', 1) }}"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">كشف
+            المهام المجموعة 1 </a>
+        <a href="{{ route('task_student', 2) }}"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">كشف
+            المهام المجموعة 2 </a>
+        <a href="{{ route('task_student', 3) }}"
+            class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">كشف
+            المهام المجموعة 3 </a>
+    </div>
+</x-app-layout>

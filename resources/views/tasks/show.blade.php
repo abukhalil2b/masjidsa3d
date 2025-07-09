@@ -93,7 +93,7 @@
                             {{ $i }}
                         </button>
                     @endfor
-                    {{-- Optional: A button for '0' or 'لم يتم التقييم' if distinct from 0 points --}}
+                   
                     @if ($task->point > 0)
                         <button type="button"
                             @click="achievedPoint = null"

@@ -12,15 +12,8 @@
         <!-- البريد الإلكتروني -->
         <div>
             <x-input-label for="email" :value="'المعلم'" />
-            <x-text-input id="email" class="block mt-1 w-full" name="email" :value="old('email')" required autofocus />
+            <x-text-input id="email" class="block mt-1 w-full" name="email" :value="old('email')" required/>
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div>
-
-        <!-- كلمة المرور -->
-        <div>
-            <x-input-label for="password" :value="'كلمة المرور'" />
-            <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required />
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
         <!-- تذكرني -->
@@ -31,9 +24,10 @@
             </label>
         </div>
 
-        <!-- الزر -->
-        <div class="flex justify-end">
-            <x-primary-button>تسجيل الدخول</x-primary-button>
+        <div class="w-full">
+            <button class="w-full flex justify-center items-center px-4 py-4 bg-white border border-blue-300 rounded-md font-bold text-xs text-blue-700 shadow-sm hover:bg-blue-50 ease-in-out duration-150">
+                تسجيل الدخول
+            </button>
         </div>
     </form>
 </x-guest-layout>

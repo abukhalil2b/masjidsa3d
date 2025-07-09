@@ -23,18 +23,29 @@
                         <table class="min-w-full divide-y divide-gray-200 text-right text-sm">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">عنوان المهمة</th>
-                                    <th class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">النقاط</th>
-                                    <th class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">تاريخ الإنجاز</th>
+                                    <th
+                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                        عنوان المهمة</th>
+                                    <th
+                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                        النقاط</th>
+                                    <th
+                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                        تاريخ الإنجاز</th>
+                                    <th
+                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                        إجراء</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($studentTasksStatus as $taskStatus)
                                     <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                        <td class="px-4 py-3 text-gray-800 whitespace-nowrap">{{ $taskStatus->task->title }}</td>
+                                        <td class="px-4 py-3 text-gray-800 whitespace-nowrap">
+                                            {{ $taskStatus->task->title }}</td>
                                         <td class="px-4 py-3 text-gray-700 font-semibold whitespace-nowrap">
                                             @if ($taskStatus->achieved_point !== null)
-                                                <span class="text-green-600">{{ $taskStatus->achieved_point }}</span> من {{ $taskStatus->task->point }}
+                                                <span class="text-green-600">{{ $taskStatus->achieved_point }}</span>
+                                                من {{ $taskStatus->task->point }}
                                             @else
                                                 - من {{ $taskStatus->task->point }}
                                             @endif
@@ -42,17 +53,95 @@
                                         <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
                                             {{ $taskStatus->done_at ? $taskStatus->done_at->format('Y-m-d') : '-' }}
                                         </td>
+                                        <td class="px-4 py-3 whitespace-nowrap">
+                                            <x-primary-button x-data
+                                                x-on:click.prevent="$dispatch('open-modal', 'evaluate-task-{{ $taskStatus->task->id }}')">
+                                                تقييم
+                                            </x-primary-button>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
                         </table>
+                        @foreach ($studentTasksStatus as $taskStatus)
+                            @php
+                                $task = $taskStatus->task;
+                            @endphp
+
+                            <x-modal name="evaluate-task-{{ $task->id }}" focusable>
+                                <form method="POST" action="{{ route('student-tasks.evaluate.store') }}"
+                                    class="p-6" x-data="{ achievedPoint: {{ $taskStatus->achieved_point ?? 'null' }} }">
+                                    @csrf
+                                    @method('PUT')
+
+                                    <input type="hidden" name="student_id" value="{{ $student->id }}">
+                                    <input type="hidden" name="task_id" value="{{ $task->id }}">
+                                    <input type="hidden" name="achieved_point" x-model="achievedPoint">
+
+                                    <h2 class="text-2xl font-bold text-gray-900 mb-6">
+                                        تقييم المهمة: <span class="text-indigo-600">{{ $task->title }}</span>
+                                    </h2>
+
+                                    <p class="mb-4 text-gray-700">اختر النقاط المحققة (الحد الأقصى: {{ $task->point }}
+                                        نقاط):</p>
+
+                                    <div
+                                        class="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3 mb-6">
+                                        @for ($i = 0; $i <= $task->point; $i++)
+                                            <button type="button" @click="achievedPoint = {{ $i }}"
+                                                :class="{
+                                                    'bg-indigo-600 text-white shadow-lg': achievedPoint ==
+                                                        {{ $i }},
+                                                    'bg-gray-200 text-gray-800 hover:bg-gray-300': achievedPoint !=
+                                                        {{ $i }}
+                                                }"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full font-semibold text-lg transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                                {{ $i }}
+                                            </button>
+                                        @endfor
+
+                                        @if ($task->point > 0)
+                                            <button type="button" @click="achievedPoint = null"
+                                                :class="{
+                                                    'bg-red-600 text-white shadow-lg': achievedPoint ===
+                                                        null,
+                                                    'bg-gray-200 text-gray-800 hover:bg-gray-300': achievedPoint !==
+                                                        null
+                                                }"
+                                                class="flex items-center justify-center w-10 h-10 rounded-full font-semibold text-xs transition duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                                مسح
+                                            </button>
+                                        @endif
+                                    </div>
+
+                                    <div class="mb-6 text-center text-lg font-bold text-gray-800">
+                                        النقاط المختارة: <span
+                                            x-text="achievedPoint !== null ? achievedPoint : 'لم يتم الاختيار'"></span>
+                                    </div>
+
+                                    <div class="mt-6 flex justify-end gap-3">
+                                        <x-secondary-button x-on:click="$dispatch('close')" type="button">
+                                            إلغاء
+                                        </x-secondary-button>
+                                        <x-primary-button type="submit">
+                                            حفظ التقييم
+                                        </x-primary-button>
+                                    </div>
+                                </form>
+                            </x-modal>
+                        @endforeach
+
                     </div>
                 </div>
             @else
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                     <div class="p-6 text-gray-900 text-center">
-                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor" aria-hidden="true">
+                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                            </path>
                         </svg>
                         <h3 class="mt-2 text-lg font-medium text-gray-700">لا توجد مهام مخصصة</h3>
                         <p class="mt-1 text-sm text-gray-500">لا توجد مهام مرتبطة بمجموعة هذا الطالب.</p>

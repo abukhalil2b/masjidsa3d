@@ -43,9 +43,7 @@
                                         <th
                                             class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
                                             الحالة</th>
-                                        <th
-                                            class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider text-center">
-                                            إجراء</th>
+                                   
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-100">
@@ -75,12 +73,7 @@
                                                     </span>
                                                 @endif
                                             </td>
-                                            <td class="px-4 py-3 text-center whitespace-nowrap">
-                                                <a href="{{ route('student-tasks.evaluate.form', ['student' => $studentStatus->student->id, 'task' => $taskData->task->id]) }}"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 focus:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                                    {{ __('تقييم') }}
-                                                </a>
-                                            </td>
+                                           
                                         </tr>
                                     @endforeach
                                 </tbody>

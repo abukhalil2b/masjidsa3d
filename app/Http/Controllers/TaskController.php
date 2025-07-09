@@ -123,38 +123,6 @@ class TaskController extends Controller
     }
 
 
-    public function evaluateForm(Student $student, Task $task)
-    {
-        // Find the existing StudentTask record if it exists
-        $studentTask = StudentTask::where('student_id', $student->id)
-            ->where('task_id', $task->id)
-            ->first();
-        return view('tasks.evaluate.form', compact('student', 'task', 'studentTask'));
-    }
-
-    public function storeEvaluation(Request $request)
-    {
-        $validated = $request->validate([
-            'student_id' => 'required|exists:students,id',
-            'task_id' => 'required|exists:tasks,id',
-            'achieved_point' => 'required|numeric|min:0|max:100',
-        ]);
-
-        StudentTask::updateOrCreate(
-            [
-                'student_id' => $validated['student_id'],
-                'task_id' => $validated['task_id'],
-            ],
-            [
-                'achieved_point' => $validated['achieved_point'],
-                'done_at' => now(),
-            ]
-        );
-
-        return redirect()->route('tasks.show', $validated['task_id'])
-            ->with('success', 'تم حفظ التقييم بنجاح');
-    }
-
 
     public function evaluateIndex()
     {
