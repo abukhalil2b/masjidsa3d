@@ -9,7 +9,7 @@
     </x-slot>
 
     <div class="py-6">
-        <div class="max-w-7xl mx-auto sm:px-2 lg:px-4">
+        <div class="max-w-7xl mx-auto sm:px-2 lg:px-2">
             @if ($studentTasksStatus->count() > 0)
                 <div class="mb-6 bg-white p-4 sm:p-6 rounded-lg shadow-sm">
                     <h3 class="text-lg font-bold text-gray-800 mb-3">
@@ -23,42 +23,39 @@
                         <table class="min-w-full divide-y divide-gray-200 text-right text-sm">
                             <thead class="bg-gray-50">
                                 <tr>
-                                    <th
-                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                    <th class="px-2 py-3 text-gray-600 font-semibold whitespace-nowrap">
                                         عنوان المهمة</th>
-                                    <th
-                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                    <th class="px-2 py-3 text-gray-600 font-semibold whitespace-nowrap">
+                                        تقييم</th>
+                                    <th class="px-2 py-3 text-gray-600 font-semibold whitespace-nowrap">
                                         النقاط</th>
-                                    <th
-                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
+                                    <th class="px-2 py-3 text-gray-600 font-semibold whitespace-nowrap">
                                         تاريخ الإنجاز</th>
-                                    <th
-                                        class="px-4 py-3 text-gray-600 font-semibold uppercase tracking-wider whitespace-nowrap">
-                                        إجراء</th>
+
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-100">
                                 @foreach ($studentTasksStatus as $taskStatus)
                                     <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
-                                        <td class="px-4 py-3 text-gray-800 whitespace-nowrap">
-                                            {{ $taskStatus->task->title }}</td>
-                                        <td class="px-4 py-3 text-gray-700 font-semibold whitespace-nowrap">
-                                            @if ($taskStatus->achieved_point !== null)
-                                                <span class="text-green-600">{{ $taskStatus->achieved_point }}</span>
-                                                من {{ $taskStatus->task->point }}
-                                            @else
-                                                - من {{ $taskStatus->task->point }}
-                                            @endif
+                                        <td class="px-2 py-3">
+                                            <div
+                                                class="{{ $taskStatus->achieved_point > 0 ? 'text-green-500' : 'text-gray-400' }}">
+                                                {{ $taskStatus->task->title }}
+                                            </div>
                                         </td>
-                                        <td class="px-4 py-3 text-gray-600 whitespace-nowrap">
-                                            {{ $taskStatus->done_at ? $taskStatus->done_at->format('Y-m-d') : '-' }}
-                                        </td>
-                                        <td class="px-4 py-3 whitespace-nowrap">
+                                        <td class="px-2 py-3 whitespace-nowrap">
                                             <x-primary-button x-data
                                                 x-on:click.prevent="$dispatch('open-modal', 'evaluate-task-{{ $taskStatus->task->id }}')">
                                                 تقييم
                                             </x-primary-button>
                                         </td>
+                                        <td class="px-2 py-3 text-gray-700 font-semibold whitespace-nowrap">
+                                            {{ $taskStatus->achieved_point }}
+                                        </td>
+                                        <td class="px-2 py-3 text-gray-600 whitespace-nowrap">
+                                            {{ $taskStatus->done_at ? $taskStatus->done_at->format('Y-m-d') : '-' }}
+                                        </td>
+
                                     </tr>
                                 @endforeach
                             </tbody>

@@ -44,6 +44,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('tasks', TaskController::class)->except(['create', 'edit']);
 
 
+    Route::get('students/{student}/bulk-tasks', [StudentTaskController::class, 'bulkEdit'])->name('student_tasks.bulk.edit');
+    Route::post('students/{student}/bulk-tasks', [StudentTaskController::class, 'bulkUpdate'])->name('student_tasks.bulk.update');
 
 
     // Attendance Routes
@@ -53,7 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('attendances/{attendance}', [AttendanceController::class, 'show'])->name('attendances.show');
     Route::put('attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
 
-      Route::get('students/show_tasks/{student}', [StudentController::class, 'showTasks'])->name('students.show_tasks');
+    Route::get('students/show_tasks/{student}', [StudentController::class, 'showTasks'])->name('students.show_tasks');
 
     // Student Management Routes
     Route::get('admin/students/index/{student_group}', [AdminStudentController::class, 'index'])->name('admin.students.index');
