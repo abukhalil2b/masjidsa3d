@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class StudentTask extends Pivot
 {
     protected $table = 'student_tasks';
-    protected $guarded = [];  // or specify fillable fields explicitly
+    protected $guarded = []; 
     public $timestamps = false;
 
     protected $casts = [

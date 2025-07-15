@@ -19,4 +19,9 @@ class StudentGroup extends Model
     {
         return $this->belongsToMany(TaskGroup::class, 'group_task_assignments', 'student_group_id', 'task_group_id');
     }
+
+    public function groupTaskAssignments()
+    {
+        return $this->hasMany(GroupTaskAssignment::class);
+    }
 }

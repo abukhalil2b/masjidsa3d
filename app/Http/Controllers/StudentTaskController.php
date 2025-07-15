@@ -8,6 +8,7 @@ use App\Models\StudentTask; // Ensure this is correctly used for pivot model
 use App\Models\TaskGroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth; // If needed for authorization checks
+use Carbon\Carbon;
 
 class StudentTaskController extends Controller
 {
@@ -41,60 +42,50 @@ class StudentTaskController extends Controller
 
     public function bulkEdit(Student $student)
     {
-        // Get task group IDs assigned to the student's group
-        $taskGroupIds = \DB::table('group_task_assignments')
-            ->where('student_group_id', $student->student_group_id)
+        // Get all task groups assigned to the student's group
+        $assignedTaskGroupIds = $student->studentGroup
+            ->groupTaskAssignments()
             ->pluck('task_group_id');
 
-        // Get all tasks in those groups
-        $tasks = \App\Models\Task::whereIn('task_group_id', $taskGroupIds)->get();
+        // Get all task IDs already done by this student
+        $doneTaskIds = $student->studentTasks()
+            ->pluck('task_id')
+            ->toArray();
 
-        // Get student_tasks records for the student and these tasks
-        $studentTasks = \App\Models\StudentTask::where('student_id', $student->id)
-            ->whereIn('task_id', $tasks->pluck('id'))
-            ->get()->keyBy('task_id');
+        // Get tasks from assigned task groups that have NOT been done yet
+        $tasks = Task::whereIn('task_group_id', $assignedTaskGroupIds)
+            ->whereNotIn('id', $doneTaskIds)
+            ->get();
 
-        // Collect tasks not done yet (no student_task or done_at is null)
-        $tasksToShow = [];
-
-        foreach ($tasks as $task) {
-            $studentTask = $studentTasks->get($task->id);
-
-            if (!$studentTask || $studentTask->done_at === null) {
-                $tasksToShow[] = (object)[
-                    'task' => $task,
-                    'student_task' => $studentTask,
-                ];
-            }
-        }
-
-        return view('student_tasks.bulk_edit', compact('student', 'tasksToShow'));
+        return view('student_tasks.bulk_edit', compact('student', 'tasks'));
     }
 
 
-public function bulkUpdate(Request $request, Student $student)
-{
-    $validated = $request->validate([
-        'task_ids' => 'required|array',
-        'task_ids.*' => 'integer|exists:tasks,id',
-        'achieved_point' => 'required|integer|min:0|max:100',
-    ]);
 
-    $achievedPoint = $validated['achieved_point'];
-
-    foreach ($validated['task_ids'] as $taskId) {
-        $studentTask = \App\Models\StudentTask::firstOrNew([
-            'student_id' => $student->id,
-            'task_id' => $taskId,
+    public function bulkUpdate(Request $request, Student $student)
+    {
+        // Validate the input
+        $validated = $request->validate([
+            'task_ids' => 'required|array',
+            'task_ids.*' => 'exists:tasks,id',
+            'achieved_point' => 'required|integer|min:0',
         ]);
 
-        $studentTask->achieved_point = $achievedPoint;
-        $studentTask->done_at = now();
-        $studentTask->save();
+        $doneAt = Carbon::now();
+
+        foreach ($validated['task_ids'] as $taskId) {
+            StudentTask::updateOrCreate(
+                [
+                    'student_id' => $student->id,
+                    'task_id' => $taskId,
+                ],
+                [
+                    'achieved_point' => $validated['achieved_point'],
+                    'done_at' => $doneAt,
+                ]
+            );
+        }
+
+        return redirect()->route('dashboard')->with('success', 'Tasks successfully assigned.');
     }
-
-    return redirect()->route('student_tasks.bulk.edit', $student->id)
-        ->with('success', 'Selected tasks marked as done with point ' . $achievedPoint);
-}
-
 }
