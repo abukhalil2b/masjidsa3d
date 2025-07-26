@@ -12,4 +12,9 @@ class StudentAttendance extends Model
     {
         return $this->belongsTo(Student::class);
     }
+
+    public function attendance()
+    {
+        return $this->belongsTo(Attendance::class);
+    }
 }

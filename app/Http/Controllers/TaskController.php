@@ -13,32 +13,29 @@ use Illuminate\Support\Facades\DB;
 class TaskController extends Controller
 {
 
-    public function taskPercentage()
+    public function taskCompletedCount()
     {
         $students = Student::all();
-
         $data = [];
 
         foreach ($students as $student) {
-            // Get tasks assigned to this student via student_tasks
-            $studentTasks = StudentTask::where('student_id', $student->id)->with('task')->get();
-
-            $totalPossiblePoints = $studentTasks->sum(fn($st) => $st->task->point);
-            $totalAchievedPoints = $studentTasks->sum('achieved_point');
-
-            $percentage = $totalPossiblePoints > 0 ? round(($totalAchievedPoints / $totalPossiblePoints) * 100, 2) : 0;
+            // Count how many tasks this student completed (done_at is not null)
+            $completedCount = StudentTask::where('student_id', $student->id)
+                ->whereNotNull('done_at')
+                ->count();
 
             $data[] = [
                 'name' => $student->name,
-                'percentage' => $percentage,
+                'completed' => $completedCount,
             ];
         }
 
-        // Sort by highest percentage
-        $data = collect($data)->sortByDesc('percentage')->values();
+        // Sort by most tasks completed
+        $data = collect($data)->sortByDesc('completed')->values();
 
-        return view('tasks.percentage', compact('data'));
+        return view('tasks.completed_count', compact('data'));
     }
+
 
 
     public function index()

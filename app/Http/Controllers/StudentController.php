@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Student;
-use App\Models\StudentGroup;
+use App\Models\StudentAttendance;
+use App\Models\Attendance;
 use App\Models\StudentTask;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -13,7 +14,7 @@ class StudentController extends Controller
 {
 
 
-    
+
 
     public function storeAssignedStudents(Request $request, Task $task)
     {
@@ -84,6 +85,33 @@ class StudentController extends Controller
         return redirect()->route('tasks.evaluate.index')
             ->with('success', 'النقاط المسجلة بنجاح للمهمة ' . $studentTask->task->title . ' للطالب ' . $studentTask->student->name);
     }
+
+
+    public function studentAttendance(Student $student)
+    {
+        // All attendance sessions
+        $allAttendances = Attendance::orderBy('created_at')->get();
+
+        // Student's present attendances
+        $present = StudentAttendance::where('student_id', $student->id)->pluck('attendance_id')->toArray();
+
+        // Separate into present and absent
+        $attendances = $allAttendances->map(function ($attendance) use ($student, $present) {
+            return [
+                'title' => $attendance->title,
+                'attend_at' => optional(
+                    StudentAttendance::where('student_id', $student->id)
+                        ->where('attendance_id', $attendance->id)
+                        ->first()
+                )->attend_at,
+                'status' => in_array($attendance->id, $present) ? 'present' : 'absent',
+            ];
+        });
+
+        return view('students.attendance', compact('attendances', 'student'));
+    }
+
+
 
     public function showTasks(Student $student)
     {
