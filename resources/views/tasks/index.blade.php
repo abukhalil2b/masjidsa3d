@@ -22,6 +22,12 @@
                     class="text-xs px-3 py-1 rounded-md font-medium text-white bg-gray-800 hover:bg-gray-700 transition duration-150 ease-in-out">
                     ربط المهام بالطلاب
                 </a>
+                
+                <a href="{{ route('task.percentage') }}"
+                    class="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg shadow hover:bg-blue-700 transition">
+                    نسبة إنجاز المهام
+                </a>
+
             </div>
 
             <div class="mb-6 px-2 flex flex-col sm:flex-row items-center gap-2 text-sm">
@@ -42,7 +48,8 @@
                             x-show="selectedGroup === '' || selectedGroup == {{ $task->group->id ?? 'null' }}">
                             <div class="flex justify-between items-center mb-2">
                                 <h3 class="font-semibold text-gray-800">{{ $task->title }}</h3>
-                                <span class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
+                                <span
+                                    class="text-[10px] px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
                                     {{ $task->point }} نقاط
                                 </span>
                             </div>
@@ -92,7 +99,8 @@
                             x-show="selectedGroup === '' || selectedGroup == {{ $task->group->id ?? 'null' }}">
                             <div class="flex justify-between items-start mb-3">
                                 <h3 class="font-bold text-gray-900 text-base">{{ $task->title }}</h3>
-                                <span class="text-xs p-1 min-w-[24px] h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-800 font-semibold">
+                                <span
+                                    class="text-xs p-1 min-w-[24px] h-6 flex items-center justify-center rounded-full bg-blue-100 text-blue-800 font-semibold">
                                     {{ $task->point }}
                                 </span>
                             </div>
@@ -177,18 +185,22 @@
                 </select>
                 <x-input-error :messages="$errors->get('task_group_id')" class="mt-2 text-xs" />
 
-                <button type="button" class="text-indigo-600 text-xs mt-3 hover:text-indigo-800 transition duration-150 ease-in-out" x-show="!newGroup"
-                    x-on:click="newGroup = true">
+                <button type="button"
+                    class="text-indigo-600 text-xs mt-3 hover:text-indigo-800 transition duration-150 ease-in-out"
+                    x-show="!newGroup" x-on:click="newGroup = true">
                     {{ __('أو إنشاء برنامج جديد') }}
                 </button>
 
                 <div x-show="newGroup" class="mt-3">
-                    <x-input-label for="new_group_title" value="{{ __('اسم الالبرنامج الجديدة') }}" class="mb-1" />
+                    <x-input-label for="new_group_title" value="{{ __('اسم الالبرنامج الجديدة') }}"
+                        class="mb-1" />
                     <x-text-input id="new_group_title" name="new_group_title" type="text"
                         class="mt-1 block w-full text-sm" />
                     <x-input-error :messages="$errors->get('new_group_title')" class="mt-2 text-xs" />
 
-                    <button type="button" class="text-red-600 text-xs mt-3 hover:text-red-800 transition duration-150 ease-in-out" x-on:click="newGroup = false">
+                    <button type="button"
+                        class="text-red-600 text-xs mt-3 hover:text-red-800 transition duration-150 ease-in-out"
+                        x-on:click="newGroup = false">
                         {{ __('اختر من المجموعات الموجودة بدلاً من ذلك') }}
                     </button>
                 </div>

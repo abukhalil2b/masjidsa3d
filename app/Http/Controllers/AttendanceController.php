@@ -5,10 +5,34 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\Student;
+use App\Models\StudentAttendance;
 use Illuminate\Http\Request;
 
 class AttendanceController extends Controller
 {
+
+
+    public function percentage()
+    {
+        $students = Student::all();
+        $totalSessions = Attendance::count();
+        $data = [];
+
+        foreach ($students as $student) {
+            $attended = StudentAttendance::where('student_id', $student->id)->count();
+            $percentage = $totalSessions > 0 ? round(($attended / $totalSessions) * 100, 2) : 0;
+
+            $data[] = [
+                'name' => $student->name,
+                'percentage' => $percentage,
+            ];
+        }
+
+        // Sort descending by percentage
+        $data = collect($data)->sortByDesc('percentage')->values();
+
+        return view('attendances.percentage', compact('data'));
+    }
 
 
     public function index()
@@ -94,20 +118,21 @@ class AttendanceController extends Controller
             }
         }
 
-        return redirect()->route('attendances.show', $attendance->id)
+        return redirect()->route('attendances.index')
             ->with('success', 'تم تحديث حالة الحضور بنجاح');
     }
 
-    public function attendanceAllStudent(){
+    public function attendanceAllStudent()
+    {
         $students = Student::all();
-        return view('students.attendance_all_student',compact('students'));
+        return view('students.attendance_all_student', compact('students'));
     }
 
-     public function taskStudent($group_id){
+    public function taskStudent($group_id)
+    {
 
-        $students = Student::where('student_group_id',$group_id)->get();
+        $students = Student::where('student_group_id', $group_id)->get();
 
-        return view('students.task_student',compact('students'));
+        return view('students.task_student', compact('students'));
     }
-    
 }

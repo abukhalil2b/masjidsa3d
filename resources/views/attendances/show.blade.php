@@ -35,8 +35,8 @@
         </table>
 
         <div class="py-4 flex justify-center">
-            <x-primary-button>
-                {{ __('تحديث الحضور') }}
+            <x-primary-button type="submit">
+             تحديث الحضور
             </x-primary-button>
         </div>
     </form>

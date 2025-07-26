@@ -37,6 +37,10 @@
                 @endforeach
             </tbody>
         </table>
+
+        <a href="{{ route('attendances.percentage') }}">
+            الحضور بالنسبة المئوية
+        </a>
     </div>
 
 </x-app-layout>

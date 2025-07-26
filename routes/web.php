@@ -43,12 +43,16 @@ Route::middleware('auth')->group(function () {
     // Resource routes for TaskController (excluding create/edit views)
     Route::resource('tasks', TaskController::class)->except(['create', 'edit']);
 
+     Route::get('task/percentage', [TaskController::class, 'taskPercentage'])
+        ->name('task.percentage');
+
 
     Route::get('students/{student}/bulk-tasks', [StudentTaskController::class, 'bulkEdit'])->name('student_tasks.bulk.edit');
     Route::post('students/{student}/bulk-tasks', [StudentTaskController::class, 'bulkUpdate'])->name('student_tasks.bulk.update');
 
 
     // Attendance Routes
+    Route::get('attendances/percentage', [AttendanceController::class, 'percentage'])->name('attendances.percentage');
     Route::get('attendances/index', [AttendanceController::class, 'index'])->name('attendances.index');
     Route::get('attendances/create', [AttendanceController::class, 'create'])->name('attendances.create');
     Route::post('attendances/store', [AttendanceController::class, 'store'])->name('attendances.store');
